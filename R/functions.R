@@ -80,10 +80,11 @@ mapme <- function(state_file, city_file, border_color = "#F2F1F1", city_color = 
 
   cities_sf <- get_cities(city_status)
 
-  tidycensus::state_laea |>
-    dplyr::left_join(visit_status, by = "GEOID") |>
-    dplyr::filter(!GEOID %in% c("15", "02")) |>
-    ggplot2::ggplot() +
+  tmp <- tidycensus::state_laea
+
+  tmp <- dplyr::left_join(tmp, visit_status, by = "GEOID")
+  tmp <- dplyr::filter(tmp, !GEOID %in% c("15", "02"))
+  ggplot2::ggplot(tmp) +
     ggplot2::geom_sf(ggplot2::aes(fill = status), color = border_color) +
     ggplot2::geom_sf(data = cities_sf, size = 3, color = city_color) +
     ggplot2::scale_fill_manual(values = status_fill) +
