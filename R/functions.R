@@ -60,12 +60,9 @@ mapme <- function(state_file, city_file, border_color = "#F2F1F1", city_color = 
 
   visit_status <- read.csv(state_file, colClasses = c(GEOID = "character"))
 
-  visit_status$GEOID <- formatC(
-    visit_status$GEOID,
-    width = 2,
-    format = "d",
-    flag = "0"
-  )
+  geoid <- trimws(as.character(visit_status$GEOID))
+  visit_status$GEOID <- sprintf("%02d", as.numeric(geoid))
+
 
   city_status <- read.csv(city_file)
 
