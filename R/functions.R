@@ -55,9 +55,18 @@ get_cities <- function(city_status) {
 #' @return
 #' @export
 mapme <- function(state_file, city_file, border_color = "#F2F1F1", city_color = "#EA3223",
-                  status_fill = c("#E5E5E5", "#afb6d2", "#A0BEA5")) {
+                  status_fill = c("#E5E5E5", "#afb6d2", "#A0BEA5"),
+                  lower48_only = FALSE) {
 
   visit_status <- read.csv(state_file, colClasses = c(GEOID = "character"))
+
+  visit_status$GEOID <- formatC(
+    visit_status$GEOID,
+    width = 2,
+    format = "d",
+    flag = "0"
+  )
+
   city_status <- read.csv(city_file)
 
   unique_state_status <- unique(visit_status$status)
@@ -83,7 +92,12 @@ mapme <- function(state_file, city_file, border_color = "#F2F1F1", city_color = 
   tmp <- tidycensus::state_laea
 
   tmp <- dplyr::left_join(tmp, visit_status, by = "GEOID")
-  tmp <- dplyr::filter(tmp, !GEOID %in% c("15", "02"))
+
+
+  if (lower48_only) {
+    tmp <- dplyr::filter(tmp, !GEOID %in% c("15", "02"))
+  }
+
   ggplot2::ggplot(tmp) +
     ggplot2::geom_sf(ggplot2::aes(fill = status), color = border_color) +
     ggplot2::geom_sf(data = cities_sf, size = 3, color = city_color) +
