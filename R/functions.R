@@ -38,7 +38,7 @@ get_cities <- function(city_status) {
   geocode <- AOI::geocode(city_status$location)
   sf::st_as_sf(
     geocode,
-    coords = c("lon", "lat"),
+    coords = c("x", "y"),
     crs = 4326,
     agr = "constant"
   )
